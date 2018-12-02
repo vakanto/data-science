@@ -84,14 +84,6 @@ class kmeansClusterer():
         for i in range(k):
             self.clusters[i].calculateCentroid()
 
-
-
-
-
-
-
-
-
 def clusterPlot(clusters):
     import matplotlib.pyplot as plot
     import numpy as np
@@ -104,7 +96,6 @@ def clusterPlot(clusters):
         centroid = c.centroid
         plt.plot(centroid[0], centroid[1], 'X', c='black')
         fig.canvas.draw()
-
 
 alg=kmeansClusterer()
 alg.initializeCluster()
