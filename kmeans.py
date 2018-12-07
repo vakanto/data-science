@@ -7,9 +7,9 @@ import matplotlib.animation as animation
 
 #input=[[1,5],[6,2],[8,1],[3,5],[2,4],[2,6],[6,1],[6,8],[7,3],[7,6],[8,3],[8,7],[3,4],[2,9],[6,7],[2,1]]
 input=[]
-for i in range(1000):
-    a=random.randint(0, 1000)
-    b=random.randint(0, 1000)
+for i in range(100):
+    a=random.randint(0, 10000000)
+    b=random.randint(0, 10000000)
     l=[a,b]
     input.append(l)
 k=5
@@ -96,6 +96,7 @@ def clusterPlot(clusters):
         centroid = c.centroid
         plt.plot(centroid[0], centroid[1], 'X', c='black')
         fig.canvas.draw()
+        time.sleep(1)
 
 alg=kmeansClusterer()
 alg.initializeCluster()
@@ -105,5 +106,6 @@ fig = plt.figure()
 plt.show()
 clusterPlot(alg.clusters)
 alg.calculateCluster()
+plt.show()
 # # for i in range(k):
 # #     print(alg.clusters[i].centroid, " ",alg.clusters[i].elements)
