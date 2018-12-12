@@ -5,18 +5,6 @@ import createInput as inputValues
 
 input=inputValues.create2dimensionalList(100)
 
-class Point():
-    def __init__(self,x,y):
-        self.xValue=x
-        self.yValue=y
-        self.clusterID=None
-
-class Cluster():
-    def __init__(self, elements, id):
-        self.elements=elements
-        self.id=id
-
-
 def euclideanDist(a,b):
     import math as m
     p1=[a.xValue, a.yValue]
@@ -28,6 +16,17 @@ def euclideanDist(a,b):
 def initializePoints(p):
     point=Point(p[0], p[1])
     return point
+
+class Point():
+    def __init__(self,x,y):
+        self.xValue=x
+        self.yValue=y
+        self.clusterID=None
+
+class Cluster():
+    def __init__(self, elements, id):
+        self.elements=elements
+        self.id=id
 
 class dbScanner:
     def __init__(self, minPoints, width):
@@ -86,6 +85,6 @@ class dbScanner:
 
 
 
-dbScanner=dbScanner(2, 1000000)
+dbScanner=dbScanner(2, 100)
 dbScanner.dbScan()
 plots.pointClusterPlot(dbScanner.clusters)

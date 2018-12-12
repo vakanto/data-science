@@ -25,6 +25,26 @@ def pointClusterPlot(clusters):
     
     plt.show()
     
+def pointPlot(points):
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    #fig = plot.figure()
+    plt.figure()
+    elems=[]
+    elements=[]
+    for p in points:
+        point=[p.xValue, p.yValue]
+        elements.append(point)
+
+    elems = np.array(elements)
+    plt.scatter(elems[:,0], elems[:,1])
+    plt.plot(centroid[0], centroid[1], 'X', c='black')
+        #centroid = c.centroid
+        #plt.plot(centroid[0], centroid[1], 'X', c='black')
+    
+    plt.show()
+    
 def interactiveClusterPlot(clusters):
     import matplotlib.pyplot as plot
     import numpy as np

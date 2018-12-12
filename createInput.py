@@ -10,8 +10,8 @@ def create2dimensionalList(size):
     import random
     input=[]
     for i in range(size):
-        a=random.randint(0, 10000000)
-        b=random.randint(0, 10000000)
+        a=random.randint(0, 1000)
+        b=random.randint(0, 1000)
         l=[a,b]
         input.append(l)
     return input
