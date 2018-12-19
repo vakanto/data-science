@@ -17,7 +17,7 @@ def pointClusterPlot(clusters):
         for p in c.elements:
             point=[p.xValue, p.yValue]
             elements.append(point)
-
+        
         elems = np.array(elements)
         plt.scatter(elems[:,0], elems[:,1])
         #centroid = c.centroid
@@ -28,7 +28,7 @@ def pointClusterPlot(clusters):
 def pointPlot(points):
     import matplotlib.pyplot as plt
     import numpy as np
-
+    import itertools
     #fig = plot.figure()
     plt.figure()
     elems=[]
@@ -36,7 +36,6 @@ def pointPlot(points):
     for p in points:
         point=[p.xValue, p.yValue]
         elements.append(point)
-
     elems = np.array(elements)
     plt.scatter(elems[:,0], elems[:,1])
     plt.plot(centroid[0], centroid[1], 'X', c='black')

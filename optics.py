@@ -8,7 +8,8 @@ Created on Wed Dec 12 14:06:44 2018
 import createInput
 import distFunctions as dist
 #input=[[1,5],[6,2],[8,1],[3,5],[2,4],[2,6],[6,1],[6,8],[7,3],[7,6],[8,3],[8,7],[3,4],[2,9],[6,7],[2,1]]
-input=createInput.create2dimensionalList(100)
+pointCount=80
+input=createInput.create2dimensionalList(pointCount)
 output=[]
 
 def initializePoints(p):
@@ -48,78 +49,139 @@ class opticsScanner():
     def generateDiagram(self, points):
         for p in self.points:
             if p.used==False:
-                p.used=True
-                output.append(p)
                 self.expandClusterOrder(p)
                 
     def neighbours(self, point):
         neighbours=[]
         for p in self.points:
             distance=euclideanDist(point, p)
-            if  distance<self.width:
+            #if distance == 0:
+            if distance<self.width:
                 neighbours.append(p)
+                if p.core==False and p!=point:
+                    p.reachableDistance=distance
         return neighbours
     
     def coreDistance(self,neighbours):
         corePoints=[]
-        neighbours=sorted(neighbours, key=lambda Point: Point.reachableDistance)
-        for i in range(self.minPoints):
-            corePoints.append(neighbours[i])
-            #print max([x.reachableDistance for x in corePoints])
+        #Entnimm die ersten minPoint Elemente
+        corePoints=neighbours[:self.minPoints]
+        #Gib die Kern-Distanz zurück
         return max([x.reachableDistance for x in corePoints])
     
     
     
     def expandClusterOrder(self, point):
         neighbours=self.neighbours(point)
+        #Sortiere die Nachbarn nach Erreichbarkeitsdistanz
+        neighbours=sorted(neighbours, key=lambda Point: Point.reachableDistance)
         point.used=True
-        output.append(point)
+        point.reachableDistance=None
+        
         if len(neighbours)>=self.minPoints:
-            for p in neighbours:
-                p.reachableDistance=euclideanDist(p, point)
+            #point ist Kern Objekt
+            neighbours.remove(point)           
             point.coreDistance=self.coreDistance(neighbours)
-            self.orderSeeds(point, neighbours)
+            point.core=True
+            output.append(point)
+            orderSeeds=neighbours
+            orderSeeds=self.updateSeeds(point, neighbours, orderSeeds)
+            point.reachableDistance=None
             
-            for p in point.seeds:
-                point = p
-                neighbours=self.neighbours(point)
-                if neighbours >= self.minPoints:
-                    point.coreDistance=self.coreDistance(neighbours)
-                    point.used=True
-                    output.append(point)
-                    self.orderSeeds(point, neighbours)
+            i=0
+            while i==0:
+                if orderSeeds == []:
+                    i=1
+                else:    
+                    new_point=orderSeeds[0]
+                    new_point.used=True
+                    new_point_neighbours=self.neighbours(new_point)
+                    
+                    if new_point_neighbours>=self.minPoints:
+                        new_point.core==True
+                        new_point_neighbours.remove(new_point)
+                        new_point.coreDistance=self.coreDistance(new_point_neighbours)
+                        orderSeeds.remove(new_point)
+                        orderSeeds=self.updateSeeds(new_point, new_point_neighbours, orderSeeds)
+                    output.append(new_point)
+                    #print new_point.reachableDistance
+        else:
+            output.append(point)
+        #self.points.remove(point)
             
-        self.points.remove(point)
             
-            
-    def orderSeeds(self, core, neighbours):   
-        neighbours.remove(core)
-        coreDist=core.coreDistance  
-        if core.seeds==[]:
-            for p in neighbours:
-                core.seeds.append(p)
+    def updateSeeds(self, core, neighbours, orderSeeds):   
         for p in neighbours:
             if p.used==False:
-                new_r_dist=min(coreDist, euclideanDist(core, p))
-     
-                if new_r_dist < p.reachableDistance:
-                    p.reachableDistance=new_r_dist
-        sorted(core.seeds)
-        #äprint core.seeds
+                new_r_dist=max(core.coreDistance, p.reachableDistance)
+                if new_r_dist < p.reachableDistance or p.reachableDistance==0:
+                    p.reachableDistance = new_r_dist
+            if p not in orderSeeds and p.used==False:
+               orderSeeds.append(p)
+               
+        orderSeeds=sorted(orderSeeds, key=lambda Point: Point.reachableDistance)
         
-optics=opticsScanner(2, 400)
+        return orderSeeds
+        
+optics=opticsScanner(2, 100)
 optics.generateDiagram(optics.points)
-for p in output:
-    print p
-    print p.reachableDistance
+#for p in output:
+#    print p.reachableDistance
     
+#import plotFunctions as plot
+
+class Cluster():
+    def __init__(self, elements, id):
+        self.elements=elements
+        self.id=id
+
+counter=0
+clusters=[]
+
+counter=0
+noise=Cluster([], 999)
+clusters.append(noise)
+cluster=Cluster([],0)
+for p in output:
+    print(p.reachableDistance)
+    if p.core==True and p.reachableDistance==None:
+        cluster=Cluster([],counter)
+        counter+=1
+        cluster.elements.append(p)
+        clusters.append(cluster)
+        #print("Core")
+        #print(p)
+    else:
+        if p.reachableDistance==None:
+            #print("Noise")
+            noise.elements.append(p)
+            #print "noise"
+            #print(p)
+        else:
+            cluster.elements.append(p)
+            #print("Element")
+            #print(p)
+
+
 import plotFunctions as plot
+plot.pointClusterPlot(clusters)
+maxHeight=max([x.reachableDistance for x in output])+50
+for x in output:
+    #print x.reachableDistance
+    if x.reachableDistance==None:
+        #print(x)
+        x.reachableDistance=maxHeight
+from matplotlib import pyplot as plt
+xValues=[x for x in range(pointCount)]
+yValues=[y.reachableDistance for y in output]
+plt.bar(xValues, yValues, width=1)
+plt.show()      
 
-plot.pointPlot(output)
-
-        
-        
-        
+for c in clusters:
+    print(c.id)
+    for p in c.elements:
+        print(p)
+    print("==========================")        
         
         
         
