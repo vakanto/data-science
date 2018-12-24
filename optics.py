@@ -106,11 +106,11 @@ class opticsScanner():
                     if len(new_point_neighbours)>=self.minPoints:
                         new_point.core==True
                         new_point_neighbours.remove(new_point)
-                        orderSeeds.remove(new_point)
                         new_point.coreDistance=self.coreDistance(new_point_neighbours)
                         orderSeeds=self.updateSeeds(new_point, new_point_neighbours, orderSeeds)
+                    orderSeeds.remove(new_point)
                     output.append(new_point)
-                    #print new_point.reachableDistance
+                    print(new_point.reachableDistance)
         else:
             output.append(point)
         #self.points.remove(point)
@@ -129,7 +129,7 @@ class opticsScanner():
         
         return orderSeeds
         
-optics=opticsScanner(2, 100)
+optics=opticsScanner(3, 100)
 optics.generateDiagram(optics.points)
 #for p in output:
 #    print p.reachableDistance
@@ -178,7 +178,7 @@ for x in output:
         #print(x)
         x.reachableDistance=maxHeight
 from matplotlib import pyplot as plt
-xValues=[x for x in range(pointCount)]
+xValues=range(pointCount)
 yValues=[y.reachableDistance for y in output]
 plt.bar(xValues, yValues, width=1)
 plt.show()      
