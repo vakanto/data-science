@@ -171,7 +171,7 @@ for p in output:
 
 import plotFunctions as plot
 plot.pointClusterPlot(clusters)
-maxHeight=max([x.reachableDistance for x in output])+50
+maxHeight=max([x.reachableDistance for x in output if x.reachableDistance!=None])+50
 for x in output:
     #print x.reachableDistance
     if x.reachableDistance==None:
