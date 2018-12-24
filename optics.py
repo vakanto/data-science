@@ -67,14 +67,20 @@ class opticsScanner():
         #Entnimm die ersten minPoint Elemente
         corePoints=neighbours[:self.minPoints]
         #Gib die Kern-Distanz zurück
-        return max([x.reachableDistance for x in corePoints])
-    
+        if len(corePoints)>1:
+            return max([x.reachableDistance for x in corePoints if x.reachableDistance!=None])
+        else:
+            return -1
     
     
     def expandClusterOrder(self, point):
-        neighbours=self.neighbours(point)
+        neighbours=[]
+        neighbours.append(point)
+        temp=self.neighbours(point)
+        temp.remove(point)
         #Sortiere die Nachbarn nach Erreichbarkeitsdistanz
-        neighbours=sorted(neighbours, key=lambda Point: Point.reachableDistance)
+        temp=sorted(temp, key=lambda Point: Point.reachableDistance)
+        neighbours=neighbours+temp
         point.used=True
         point.reachableDistance=None
         
@@ -97,11 +103,11 @@ class opticsScanner():
                     new_point.used=True
                     new_point_neighbours=self.neighbours(new_point)
                     
-                    if new_point_neighbours>=self.minPoints:
+                    if len(new_point_neighbours)>=self.minPoints:
                         new_point.core==True
                         new_point_neighbours.remove(new_point)
-                        new_point.coreDistance=self.coreDistance(new_point_neighbours)
                         orderSeeds.remove(new_point)
+                        new_point.coreDistance=self.coreDistance(new_point_neighbours)
                         orderSeeds=self.updateSeeds(new_point, new_point_neighbours, orderSeeds)
                     output.append(new_point)
                     #print new_point.reachableDistance
